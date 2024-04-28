@@ -1,6 +1,7 @@
 package com.fan.bookmanagementapi.controller;
 
 import com.fan.bookmanagementapi.controller.request.CreateBookRequest;
+import com.fan.bookmanagementapi.controller.request.UpdateBookRequest;
 import com.fan.bookmanagementapi.exception.BusinessException;
 import com.fan.bookmanagementapi.exception.GlobalExceptionHandler;
 import com.fan.bookmanagementapi.exception.NotFoundException;
@@ -93,6 +94,23 @@ public class BookControllerTest {
         response.andExpectAll(
             status().isNotFound(),
             jsonPath("$.message").value("Book not found for id is 1")
+        );
+    }
+
+    @Test
+    void should_return_204_when_update_book_given_existed_id() throws Exception {
+        Long mockId = 1L;
+        UpdateBookRequest mockRequest = DefaultTestUtil.getDefaultUpdateBookRequest();
+        when(bookService.getBookById(mockId)).thenReturn(DefaultTestUtil.getDefaultBook());
+
+        ResultActions response = mockMvc.perform(MockMvcRequestBuilders
+            .patch("/books/" + mockId)
+            .content(JsonUtil.getObjectMapper().writeValueAsString(mockRequest))
+            .contentType(MediaType.APPLICATION_JSON)
+        );
+
+        response.andExpectAll(
+            status().isNoContent()
         );
     }
 }

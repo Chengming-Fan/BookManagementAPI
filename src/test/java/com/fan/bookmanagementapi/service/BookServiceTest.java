@@ -2,6 +2,7 @@ package com.fan.bookmanagementapi.service;
 
 
 import com.fan.bookmanagementapi.controller.request.CreateBookRequest;
+import com.fan.bookmanagementapi.controller.request.UpdateBookRequest;
 import com.fan.bookmanagementapi.entity.Book;
 import com.fan.bookmanagementapi.exception.BusinessException;
 import com.fan.bookmanagementapi.exception.NotFoundException;
@@ -75,6 +76,28 @@ public class BookServiceTest {
             when(bookRepository.findById(mockId)).thenReturn(Optional.empty());
 
             NotFoundException businessException = assertThrows(NotFoundException.class, () -> bookService.getBookById(mockId));
+            assertEquals("Book not found for id is " + mockId, businessException.getMessage());
+        }
+    }
+
+    @Nested
+    class UpdateTest {
+        @Test
+        void should_update_successfully_when_id_is_existed() {
+            UpdateBookRequest mockUpdateBookRequest = DefaultTestUtil.getDefaultUpdateBookRequest();
+            Long mockId = 1L;
+            when(bookRepository.findById(mockId)).thenReturn(Optional.ofNullable(DefaultTestUtil.getDefaultBook()));
+
+            bookService.updateBook(mockId, mockUpdateBookRequest);
+        }
+
+        @Test
+        void should_throw_not_found_exception_when_id_is_not_existed() {
+            UpdateBookRequest mockUpdateBookRequest = DefaultTestUtil.getDefaultUpdateBookRequest();
+            Long mockId = 1L;
+            when(bookRepository.findById(mockId)).thenReturn(Optional.empty());
+
+            NotFoundException businessException = assertThrows(NotFoundException.class, () -> bookService.updateBook(mockId, mockUpdateBookRequest));
             assertEquals("Book not found for id is " + mockId, businessException.getMessage());
         }
     }

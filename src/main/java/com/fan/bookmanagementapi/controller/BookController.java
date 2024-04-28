@@ -1,6 +1,7 @@
 package com.fan.bookmanagementapi.controller;
 
 import com.fan.bookmanagementapi.controller.request.CreateBookRequest;
+import com.fan.bookmanagementapi.controller.request.UpdateBookRequest;
 import com.fan.bookmanagementapi.entity.Book;
 import com.fan.bookmanagementapi.service.BookService;
 import lombok.RequiredArgsConstructor;
@@ -29,5 +30,11 @@ public class BookController {
         return ResponseEntity
             .status(HttpStatus.OK)
             .body(book);
+    }
+
+    @PatchMapping("/{id}")
+    public ResponseEntity<Object> update(@PathVariable(name = "id") Long id, @RequestBody UpdateBookRequest request) {
+        bookService.updateBook(id, request);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 }

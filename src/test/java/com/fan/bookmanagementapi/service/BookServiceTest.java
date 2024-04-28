@@ -5,6 +5,7 @@ import com.fan.bookmanagementapi.controller.request.CreateBookRequest;
 import com.fan.bookmanagementapi.entity.Book;
 import com.fan.bookmanagementapi.exception.BusinessException;
 import com.fan.bookmanagementapi.repository.BookRepository;
+import com.fan.bookmanagementapi.utils.DefaultTestUtil;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
@@ -27,12 +28,7 @@ public class BookServiceTest {
 
     @Test
     void should_return_saved_book_when_request_is_valid() {
-        CreateBookRequest mockRequest = CreateBookRequest.builder()
-            .title("Book 1")
-            .author("Author 1")
-            .year(2022)
-            .isbn("isbn1")
-            .build();
+        CreateBookRequest mockRequest = DefaultTestUtil.getDefaultCreateBookRequest();
 
         bookService.createBook(mockRequest);
 
@@ -46,13 +42,8 @@ public class BookServiceTest {
 
     @Test
     void should_throw_exception_when_isbn_is_registered() {
-        CreateBookRequest mockRequest = CreateBookRequest.builder()
-            .title("Book 1")
-            .author("Author 1")
-            .year(2022)
-            .isbn("isbn1")
-            .build();
-        when(bookRepository.findBookByIsbn(mockRequest.isbn())).thenReturn(Book.builder().id(1L).title("Book 2").isbn("isbn1").build());
+        CreateBookRequest mockRequest = DefaultTestUtil.getDefaultCreateBookRequest();
+        when(bookRepository.findBookByIsbn(mockRequest.isbn())).thenReturn(DefaultTestUtil.getDefaultBook());
 
         BusinessException businessException = assertThrows(BusinessException.class, () -> bookService.createBook(mockRequest));
         assertEquals("The ISBN has already been registered", businessException.getMessage());

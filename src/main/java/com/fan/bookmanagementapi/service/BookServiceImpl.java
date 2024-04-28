@@ -10,6 +10,7 @@ import com.fan.bookmanagementapi.repository.BookRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -61,4 +62,10 @@ public class BookServiceImpl implements BookService {
             bookRepository.save(book);
         }
     }
+
+    @Override
+    public List<Book> getBooks() {
+        return bookRepository.findAllByDeletedIsFalse();
+    }
+
 }

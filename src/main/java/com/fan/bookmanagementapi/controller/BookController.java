@@ -9,6 +9,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/books")
@@ -25,11 +27,19 @@ public class BookController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Book> getBook(@PathVariable(name = "id") Long id) {
+    public ResponseEntity<Book> getBookById(@PathVariable(name = "id") Long id) {
         Book book = bookService.getBookById(id);
         return ResponseEntity
             .status(HttpStatus.OK)
             .body(book);
+    }
+
+    @GetMapping
+    public ResponseEntity<List<Book>> getBooks() {
+        List<Book> books = bookService.getBooks();
+        return ResponseEntity
+            .status(HttpStatus.OK)
+            .body(books);
     }
 
     @PatchMapping("/{id}")

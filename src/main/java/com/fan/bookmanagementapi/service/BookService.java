@@ -4,6 +4,8 @@ import com.fan.bookmanagementapi.controller.request.CreateBookRequest;
 import com.fan.bookmanagementapi.controller.request.UpdateBookRequest;
 import com.fan.bookmanagementapi.entity.Book;
 
+import java.util.List;
+
 public interface BookService {
     Book createBook(CreateBookRequest createBookRequest);
 
@@ -12,4 +14,6 @@ public interface BookService {
     void updateBook(Long id, UpdateBookRequest updateBookRequest);
 
     void deleteBook(Long id);
+
+    List<Book> getBooks();
 }

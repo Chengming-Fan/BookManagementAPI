@@ -5,4 +5,6 @@ import com.fan.bookmanagementapi.entity.Book;
 
 public interface BookService {
     Book createBook(CreateBookRequest createBookRequest);
+
+    Book getBookById(Long id);
 }

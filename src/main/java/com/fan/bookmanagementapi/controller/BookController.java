@@ -6,10 +6,7 @@ import com.fan.bookmanagementapi.service.BookService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
@@ -23,6 +20,14 @@ public class BookController {
         Book book = bookService.createBook(request);
         return ResponseEntity
             .status(HttpStatus.CREATED)
+            .body(book);
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<Book> getBook(@PathVariable(name = "id") Long id) {
+        Book book = bookService.getBookById(id);
+        return ResponseEntity
+            .status(HttpStatus.OK)
             .body(book);
     }
 }

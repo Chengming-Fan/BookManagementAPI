@@ -3,10 +3,10 @@ package com.fan.bookmanagementapi.controller;
 import com.fan.bookmanagementapi.controller.request.CreateBookRequest;
 import com.fan.bookmanagementapi.exception.BusinessException;
 import com.fan.bookmanagementapi.exception.GlobalExceptionHandler;
+import com.fan.bookmanagementapi.exception.NotFoundException;
 import com.fan.bookmanagementapi.service.BookServiceImpl;
 import com.fan.bookmanagementapi.utils.DefaultTestUtil;
 import com.fan.bookmanagementapi.utils.JsonUtil;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -62,6 +62,37 @@ public class BookControllerTest {
         response.andExpectAll(
             status().isBadRequest(),
             jsonPath("$.message").value(errorMsg)
+        );
+    }
+
+    @Test
+    void should_return_200_when_find_book_given_existed_id() throws Exception {
+        Long mockId = 1L;
+        when(bookService.getBookById(mockId)).thenReturn(DefaultTestUtil.getDefaultBook());
+
+        ResultActions response = mockMvc.perform(MockMvcRequestBuilders
+            .get("/books/" + mockId)
+        );
+
+        response.andExpectAll(
+            status().isOk(),
+            jsonPath("$.id").value(mockId),
+            jsonPath("$.title").value("Book 1")
+        );
+    }
+
+    @Test
+    void should_return_404_when_find_book_given_not_existed_id() throws Exception {
+        Long mockId = 1L;
+        when(bookService.getBookById(mockId)).thenThrow(new NotFoundException("Book not found for id is 1"));
+
+        ResultActions response = mockMvc.perform(MockMvcRequestBuilders
+            .get("/books/" + mockId)
+        );
+
+        response.andExpectAll(
+            status().isNotFound(),
+            jsonPath("$.message").value("Book not found for id is 1")
         );
     }
 }

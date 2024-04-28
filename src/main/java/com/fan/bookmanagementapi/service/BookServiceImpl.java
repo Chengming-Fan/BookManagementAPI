@@ -3,10 +3,13 @@ package com.fan.bookmanagementapi.service;
 import com.fan.bookmanagementapi.controller.request.CreateBookRequest;
 import com.fan.bookmanagementapi.entity.Book;
 import com.fan.bookmanagementapi.exception.BusinessException;
+import com.fan.bookmanagementapi.exception.NotFoundException;
 import com.fan.bookmanagementapi.mapper.BookMapper;
 import com.fan.bookmanagementapi.repository.BookRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -22,5 +25,15 @@ public class BookServiceImpl implements BookService {
         }
         Book book = BookMapper.INSTANCE.mapCreateBookRequestToBook(createBookRequest);
         return bookRepository.save(book);
+    }
+
+    @Override
+    public Book getBookById(Long id) {
+        Optional<Book> book = bookRepository.findById(id);
+        if (book.isEmpty()) {
+            throw new NotFoundException("Book not found for id is " + id);
+        } else {
+            return book.get();
+        }
     }
 }

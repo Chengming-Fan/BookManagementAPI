@@ -1,0 +1,2 @@
+ALTER TABLE book
+    ADD deleted BIT NOT NULL DEFAULT 0;

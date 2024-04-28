@@ -21,8 +21,8 @@ public class BookServiceImpl implements BookService {
 
     @Override
     public Book createBook(CreateBookRequest createBookRequest) {
-        Book bookByIsbn = bookRepository.findBookByIsbn(createBookRequest.isbn());
-        if (bookByIsbn != null) {
+        Optional<Book> bookOptional = bookRepository.findBookByIsbn(createBookRequest.isbn());
+        if (bookOptional.isPresent()) {
             throw new BusinessException("The ISBN has already been registered");
         }
         Book book = bookMapper.mapCreateBookRequestToBook(createBookRequest);
@@ -31,22 +31,34 @@ public class BookServiceImpl implements BookService {
 
     @Override
     public Book getBookById(Long id) {
-        Optional<Book> book = bookRepository.findById(id);
-        if (book.isEmpty()) {
+        Optional<Book> bookOptional = bookRepository.findById(id);
+        if (bookOptional.isEmpty()) {
             throw new NotFoundException("Book not found for id is " + id);
         } else {
-            return book.get();
+            return bookOptional.get();
         }
     }
 
     @Override
     public void updateBook(Long id, UpdateBookRequest updateBookRequest) {
-        Optional<Book> book = bookRepository.findById(id);
-        if (book.isEmpty()) {
+        Optional<Book> bookOptional = bookRepository.findById(id);
+        if (bookOptional.isEmpty()) {
             throw new NotFoundException("Book not found for id is " + id);
         } else {
-            Book updatedBook = bookMapper.mapUpdateBookRequestToBook(book.get(), updateBookRequest);
+            Book updatedBook = bookMapper.mapUpdateBookRequestToBook(bookOptional.get(), updateBookRequest);
             bookRepository.save(updatedBook);
+        }
+    }
+
+    @Override
+    public void deleteBook(Long id) {
+        Optional<Book> bookOptional = bookRepository.findById(id);
+        if (bookOptional.isEmpty()) {
+            throw new NotFoundException("Book not found for id is " + id);
+        } else {
+            Book book = bookOptional.get();
+            book.setDeleted(true);
+            bookRepository.save(book);
         }
     }
 }

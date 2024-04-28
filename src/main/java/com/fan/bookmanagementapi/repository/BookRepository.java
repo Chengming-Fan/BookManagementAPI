@@ -4,7 +4,9 @@ import com.fan.bookmanagementapi.entity.Book;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.Optional;
+
 @Repository
 public interface BookRepository extends JpaRepository<Book, Long> {
-    Book findBookByIsbn(String isbn);
+    Optional<Book> findBookByIsbn(String isbn);
 }

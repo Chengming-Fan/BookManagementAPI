@@ -101,10 +101,25 @@ public class BookControllerTest {
     void should_return_204_when_update_book_given_existed_id() throws Exception {
         Long mockId = 1L;
         UpdateBookRequest mockRequest = DefaultTestUtil.getDefaultUpdateBookRequest();
-        when(bookService.getBookById(mockId)).thenReturn(DefaultTestUtil.getDefaultBook());
 
         ResultActions response = mockMvc.perform(MockMvcRequestBuilders
             .patch("/books/" + mockId)
+            .content(JsonUtil.getObjectMapper().writeValueAsString(mockRequest))
+            .contentType(MediaType.APPLICATION_JSON)
+        );
+
+        response.andExpectAll(
+            status().isNoContent()
+        );
+    }
+
+    @Test
+    void should_return_204_when_delete_book_given_existed_id() throws Exception {
+        Long mockId = 1L;
+        UpdateBookRequest mockRequest = DefaultTestUtil.getDefaultUpdateBookRequest();
+
+        ResultActions response = mockMvc.perform(MockMvcRequestBuilders
+            .delete("/books/" + mockId)
             .content(JsonUtil.getObjectMapper().writeValueAsString(mockRequest))
             .contentType(MediaType.APPLICATION_JSON)
         );

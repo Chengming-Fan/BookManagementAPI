@@ -21,6 +21,8 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -51,7 +53,7 @@ public class BookServiceTest {
         @Test
         void should_throw_exception_when_isbn_is_registered() {
             CreateBookRequest mockRequest = DefaultTestUtil.getDefaultCreateBookRequest();
-            when(bookRepository.findBookByIsbn(mockRequest.isbn())).thenReturn(DefaultTestUtil.getDefaultBook());
+            when(bookRepository.findBookByIsbn(mockRequest.isbn())).thenReturn(Optional.of(DefaultTestUtil.getDefaultBook()));
 
             BusinessException businessException = assertThrows(BusinessException.class, () -> bookService.createBook(mockRequest));
             assertEquals("The ISBN has already been registered", businessException.getMessage());
@@ -89,6 +91,8 @@ public class BookServiceTest {
             when(bookRepository.findById(mockId)).thenReturn(Optional.ofNullable(DefaultTestUtil.getDefaultBook()));
 
             bookService.updateBook(mockId, mockUpdateBookRequest);
+
+            verify(bookRepository, times(1)).save(any());
         }
 
         @Test
@@ -102,5 +106,25 @@ public class BookServiceTest {
         }
     }
 
+    @Nested
+    class DeleteTest {
+        @Test
+        void should_delete_book_successfully_when_id_is_existed() {
+            Long mockId = 1L;
+            when(bookRepository.findById(mockId)).thenReturn(Optional.ofNullable(DefaultTestUtil.getDefaultBook()));
 
+            bookService.deleteBook(mockId);
+            ArgumentCaptor<Book> argumentCaptor = ArgumentCaptor.forClass(Book.class);
+            verify(bookRepository, times(1)).save(argumentCaptor.capture());
+            assertTrue(argumentCaptor.getValue().getDeleted());
+        }
+        @Test
+        void should_throw_not_found_exception_when_id_is_not_existed() {
+            Long mockId = 1L;
+            when(bookRepository.findById(mockId)).thenReturn(Optional.empty());
+
+            NotFoundException businessException = assertThrows(NotFoundException.class, () -> bookService.deleteBook(mockId));
+            assertEquals("Book not found for id is " + mockId, businessException.getMessage());
+        }
+    }
 }

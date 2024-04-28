@@ -23,5 +23,6 @@ public class Book {
 
     private String isbn;
 
-    private Boolean deleted;
+    @Builder.Default
+    private Boolean deleted = Boolean.FALSE;
 }

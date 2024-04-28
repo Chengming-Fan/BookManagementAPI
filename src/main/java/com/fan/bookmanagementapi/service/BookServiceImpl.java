@@ -21,7 +21,7 @@ public class BookServiceImpl implements BookService {
 
     @Override
     public Book createBook(CreateBookRequest createBookRequest) {
-        Optional<Book> bookOptional = bookRepository.findBookByIsbn(createBookRequest.isbn());
+        Optional<Book> bookOptional = bookRepository.findBookByIsbnAndDeletedIsFalse(createBookRequest.isbn());
         if (bookOptional.isPresent()) {
             throw new BusinessException("The ISBN has already been registered");
         }
@@ -31,7 +31,7 @@ public class BookServiceImpl implements BookService {
 
     @Override
     public Book getBookById(Long id) {
-        Optional<Book> bookOptional = bookRepository.findById(id);
+        Optional<Book> bookOptional = bookRepository.findByIdAndDeletedIsFalse(id);
         if (bookOptional.isEmpty()) {
             throw new NotFoundException("Book not found for id is " + id);
         } else {
@@ -41,7 +41,7 @@ public class BookServiceImpl implements BookService {
 
     @Override
     public void updateBook(Long id, UpdateBookRequest updateBookRequest) {
-        Optional<Book> bookOptional = bookRepository.findById(id);
+        Optional<Book> bookOptional = bookRepository.findByIdAndDeletedIsFalse(id);
         if (bookOptional.isEmpty()) {
             throw new NotFoundException("Book not found for id is " + id);
         } else {
@@ -52,7 +52,7 @@ public class BookServiceImpl implements BookService {
 
     @Override
     public void deleteBook(Long id) {
-        Optional<Book> bookOptional = bookRepository.findById(id);
+        Optional<Book> bookOptional = bookRepository.findByIdAndDeletedIsFalse(id);
         if (bookOptional.isEmpty()) {
             throw new NotFoundException("Book not found for id is " + id);
         } else {

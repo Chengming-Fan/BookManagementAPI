@@ -53,7 +53,7 @@ public class BookServiceTest {
         @Test
         void should_throw_exception_when_isbn_is_registered() {
             CreateBookRequest mockRequest = DefaultTestUtil.getDefaultCreateBookRequest();
-            when(bookRepository.findBookByIsbn(mockRequest.isbn())).thenReturn(Optional.of(DefaultTestUtil.getDefaultBook()));
+            when(bookRepository.findBookByIsbnAndDeletedIsFalse(mockRequest.isbn())).thenReturn(Optional.of(DefaultTestUtil.getDefaultBook()));
 
             BusinessException businessException = assertThrows(BusinessException.class, () -> bookService.createBook(mockRequest));
             assertEquals("The ISBN has already been registered", businessException.getMessage());
@@ -65,7 +65,7 @@ public class BookServiceTest {
         @Test
         void should_return_book_detail_when_id_is_existed() {
             Long mockId = 1L;
-            when(bookRepository.findById(mockId)).thenReturn(Optional.ofNullable(DefaultTestUtil.getDefaultBook()));
+            when(bookRepository.findByIdAndDeletedIsFalse(mockId)).thenReturn(Optional.ofNullable(DefaultTestUtil.getDefaultBook()));
 
             Book book = bookService.getBookById(mockId);
             assertEquals(mockId, book.getId());
@@ -75,7 +75,7 @@ public class BookServiceTest {
         @Test
         void should_throw_not_found_exception_when_id_is_not_existed() {
             Long mockId = 1L;
-            when(bookRepository.findById(mockId)).thenReturn(Optional.empty());
+            when(bookRepository.findByIdAndDeletedIsFalse(mockId)).thenReturn(Optional.empty());
 
             NotFoundException businessException = assertThrows(NotFoundException.class, () -> bookService.getBookById(mockId));
             assertEquals("Book not found for id is " + mockId, businessException.getMessage());
@@ -88,7 +88,7 @@ public class BookServiceTest {
         void should_update_successfully_when_id_is_existed() {
             UpdateBookRequest mockUpdateBookRequest = DefaultTestUtil.getDefaultUpdateBookRequest();
             Long mockId = 1L;
-            when(bookRepository.findById(mockId)).thenReturn(Optional.ofNullable(DefaultTestUtil.getDefaultBook()));
+            when(bookRepository.findByIdAndDeletedIsFalse(mockId)).thenReturn(Optional.ofNullable(DefaultTestUtil.getDefaultBook()));
 
             bookService.updateBook(mockId, mockUpdateBookRequest);
 
@@ -99,7 +99,7 @@ public class BookServiceTest {
         void should_throw_not_found_exception_when_id_is_not_existed() {
             UpdateBookRequest mockUpdateBookRequest = DefaultTestUtil.getDefaultUpdateBookRequest();
             Long mockId = 1L;
-            when(bookRepository.findById(mockId)).thenReturn(Optional.empty());
+            when(bookRepository.findByIdAndDeletedIsFalse(mockId)).thenReturn(Optional.empty());
 
             NotFoundException businessException = assertThrows(NotFoundException.class, () -> bookService.updateBook(mockId, mockUpdateBookRequest));
             assertEquals("Book not found for id is " + mockId, businessException.getMessage());
@@ -111,7 +111,7 @@ public class BookServiceTest {
         @Test
         void should_delete_book_successfully_when_id_is_existed() {
             Long mockId = 1L;
-            when(bookRepository.findById(mockId)).thenReturn(Optional.ofNullable(DefaultTestUtil.getDefaultBook()));
+            when(bookRepository.findByIdAndDeletedIsFalse(mockId)).thenReturn(Optional.ofNullable(DefaultTestUtil.getDefaultBook()));
 
             bookService.deleteBook(mockId);
             ArgumentCaptor<Book> argumentCaptor = ArgumentCaptor.forClass(Book.class);
@@ -121,7 +121,7 @@ public class BookServiceTest {
         @Test
         void should_throw_not_found_exception_when_id_is_not_existed() {
             Long mockId = 1L;
-            when(bookRepository.findById(mockId)).thenReturn(Optional.empty());
+            when(bookRepository.findByIdAndDeletedIsFalse(mockId)).thenReturn(Optional.empty());
 
             NotFoundException businessException = assertThrows(NotFoundException.class, () -> bookService.deleteBook(mockId));
             assertEquals("Book not found for id is " + mockId, businessException.getMessage());
